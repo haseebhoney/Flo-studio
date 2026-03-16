@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLO Studio — Feel The Flo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream:     #FAF7F2;
+      --cream-2:   #F2EDE4;
+      --green:     #2C4A3E;
+      --green-mid: #3D6155;
+      --gold:      #C8A97E;
+      --gold-lt:   #E4D0B0;
+      --dark:      #1A1A1A;
+      --mid:       #5A5A5A;
+      --light:     #9A9A9A;
+      --white:     #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ───── NOISE OVERLAY ───── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    /* ───── NAV ───── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 24px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, backdrop-filter 0.4s, padding 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(250,247,242,0.9);
+      backdrop-filter: blur(12px);
+      padding: 16px 60px;
+      border-bottom: 1px solid var(--gold-lt);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--green);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover { color: var(--green); }
+
+    .nav-cta {
+      background: var(--green);
+      color: var(--cream) !important;
+      padding: 10px 24px;
+      border-radius: 2px;
+      letter-spacing: 0.12em;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .nav-cta:hover { background: var(--green-mid); transform: translateY(-1px); }
+
+    /* ───── HERO ───── */
+    #hero {
+      min-height: 100vh;
+      background: var(--green);
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+
+    .hero-bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-bg-circle-1 {
+      width: 700px; height: 700px;
+      border: 1px solid rgba(200,169,126,0.15);
+      top: -200px; right: -150px;
+    }
+    .hero-bg-circle-2 {
+      width: 400px; height: 400px;
+      background: rgba(200,169,126,0.06);
+      bottom: -100px; left: 40%;
+    }
+    .hero-bg-circle-3 {
+      width: 250px; height: 250px;
+      border: 1px solid rgba(200,169,126,0.12);
+      top: 30%; left: 20%;
+    }
+
+    .hero-left {
+      padding: 160px 60px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(64px, 6vw, 96px);
+      line-height: 1;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 0;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s forwards;
+    }
+    .hero-h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-h1 .block2 {
+      display: block;
+      padding-left: 60px;
+    }
+
+    .hero-sub {
+      margin-top: 36px;
+      font-size: 15px;
+      color: rgba(250,247,242,0.65);
+      max-width: 380px;
+      line-height: 1.7;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.6s forwards;
+    }
+
+    .hero-actions {
+      margin-top: 48px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--dark);
+      padding: 14px 36px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); }
+
+    .btn-ghost {
+      color: rgba(250,247,242,0.7);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.25s;
+    }
+    .btn-ghost:hover { color: var(--gold); }
+    .btn-ghost::after {
+      content: '→';
+      transition: transform 0.25s;
+    }
+    .btn-ghost:hover::after { transform: translateX(4px); }
+
+    .hero-stats {
+      margin-top: 80px;
+      display: flex;
+      gap: 48px;
+      opacity: 0;
+      animation: fadeUp 0.9s 1s forwards;
+    }
+    .hero-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(250,247,242,0.45);
+      margin-top: 6px;
+    }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1.2s 0.5s forwards;
+    }
+    .hero-right-inner {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #3D6155 0%, #2C4A3E 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* SVG illustration placeholder */
+    .hero-illustration {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ───── MARQUEE ───── */
+    .marquee-wrap {
+      background: var(--gold);
+      padding: 16px 0;
+      overflow: hidden;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 25s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-style: italic;
+      letter-spacing: 0.08em;
+      color: var(--green);
+      padding: 0 40px;
+    }
+    .marquee-dot {
+      color: var(--green);
+      opacity: 0.5;
+      padding: 0 4px;
+    }
+
+    /* ───── ABOUT ───── */
+    #about {
+      padding: 140px 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-left {
+      position: relative;
+    }
+    .about-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+    .about-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 4vw, 64px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--green);
+    }
+    .about-h2 em { font-style: italic; color: var(--dark); }
+
+    .about-deco-line {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 36px 0;
+    }
+
+    .about-body {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--mid);
+      font-weight: 300;
+      max-width: 480px;
+    }
+
+    .about-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 36px;
+    }
+    .about-pill {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--gold-lt);
+      padding: 8px 18px;
+      border-radius: 100px;
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    .about-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .about-card {
+      background: var(--cream-2);
+      border-radius: 4px;
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .about-card:hover { transform: translateY(-4px); box-shadow: 0 20px 48px rgba(44,74,62,0.1); }
+    .about-card:first-child { grid-column: 1 / -1; background: var(--green); }
+    .about-card-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .about-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .about-card:first-child .about-card-title { color: var(--gold); }
+    .about-card-text {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .about-card:first-child .about-card-text { color: rgba(250,247,242,0.65); }
+
+    /* ───── CLASSES ───── */
+    #classes {
+      padding: 120px 0;
+      background: var(--green);
+      overflow: hidden;
+    }
+    .classes-header {
+      padding: 0 60px;
+      margin-bottom: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .classes-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .classes-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 4vw, 60px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+    .classes-h2 em { font-style: italic; color: var(--gold); }
+    .classes-desc {
+      font-size: 14px;
+      color: rgba(250,247,242,0.55);
+      max-width: 280px;
+      line-height: 1.7;
+      font-weight: 300;
+      text-align: right;
+    }
+
+    .classes-scroll {
+      display: flex;
+      gap: 24px;
+      padding: 0 60px 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .classes-scroll::-webkit-scrollbar { display: none; }
+
+    .class-card {
+      flex: 0 0 340px;
+      scroll-snap-align: start;
+      border: 1px solid rgba(200,169,126,0.2);
+      border-radius: 4px;
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s, border-color 0.4s, transform 0.3s;
+      cursor: pointer;
+    }
+    .class-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .class-card:hover::before { opacity: 0.05; }
+    .class-card:hover {
+      border-color: rgba(200,169,126,0.5);
+      transform: translateY(-4px);
+    }
+
+    .class-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      color: rgba(200,169,126,0.2);
+      line-height: 1;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .class-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .class-desc {
+      font-size: 14px;
+      color: rgba(250,247,242,0.55);
+      line-height: 1.7;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+    }
+    .class-pillars {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 28px;
+      position: relative;
+      z-index: 1;
+    }
+    .class-pillar {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid rgba(200,169,126,0.3);
+      padding: 6px 12px;
+      border-radius: 2px;
+      color: var(--gold);
+    }
+    .class-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 32px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      position: relative;
+      z-index: 1;
+      transition: gap 0.25s;
+    }
+    .class-link:hover { gap: 12px; }
+
+    /* ───── TEAM ───── */
+    #team {
+      padding: 140px 60px;
+    }
+    .team-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .section-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 4vw, 60px);
+      font-weight: 300;
+      color: var(--green);
+      line-height: 1.1;
+    }
+    .section-h2 em { font-style: italic; color: var(--dark); }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+    }
+    .team-card {
+      text-align: center;
+      padding: 40px 24px;
+      border-radius: 4px;
+      transition: background 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .team-card:hover {
+      background: var(--cream-2);
+      transform: translateY(-6px);
+    }
+    .team-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--cream-2);
+      border: 2px solid var(--gold-lt);
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--green);
+      overflow: hidden;
+    }
+    .team-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+    .team-role {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ───── WHY FLO ───── */
+    #why {
+      padding: 120px 60px;
+      background: var(--cream-2);
+    }
+    .why-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 100px;
+      align-items: start;
+    }
+    .why-left {
+      position: sticky;
+      top: 120px;
+    }
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .why-item {
+      padding: 36px;
+      background: var(--cream);
+      border-radius: 4px;
+      border-left: 3px solid var(--gold);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .why-item:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(44,74,62,0.08); }
+    .why-item-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 40px;
+      font-weight: 300;
+      color: var(--gold-lt);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .why-item-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .why-item-text {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ───── FAQ ───── */
+    #faq {
+      padding: 120px 60px;
+    }
+    .faq-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 100px;
+      align-items: start;
+    }
+    .faq-left {
+      position: sticky;
+      top: 120px;
+    }
+    .faq-list { list-style: none; }
+    .faq-item {
+      border-bottom: 1px solid var(--gold-lt);
+      overflow: hidden;
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      cursor: pointer;
+      text-align: left;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--green);
+      gap: 16px;
+      transition: color 0.25s;
+    }
+    .faq-q:hover { color: var(--dark); }
+    .faq-icon {
+      font-size: 18px;
+      color: var(--gold);
+      flex-shrink: 0;
+      transition: transform 0.3s;
+      font-style: normal;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+    .faq-item.open .faq-a { max-height: 300px; }
+    .faq-a-inner {
+      padding: 0 0 24px;
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ───── CTA BAND ───── */
+    #cta {
+      padding: 120px 60px;
+      background: var(--green);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(200,169,126,0.12);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #cta::after {
+      content: '';
+      position: absolute;
+      width: 900px; height: 900px;
+      border-radius: 50%;
+      border: 1px solid rgba(200,169,126,0.06);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .cta-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .cta-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 5vw, 80px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .cta-h2 em { font-style: italic; color: var(--gold); }
+    .cta-sub {
+      font-size: 16px;
+      color: rgba(250,247,242,0.55);
+      max-width: 440px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+      font-weight: 300;
+      position: relative;
+      z-index: 2;
+    }
+    .cta-actions {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: var(--dark);
+      padding: 16px 44px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-2px); }
+    .btn-outline {
+      border: 1px solid rgba(200,169,126,0.4);
+      color: rgba(250,247,242,0.75);
+      padding: 16px 44px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: border-color 0.25s, color 0.25s, transform 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    /* ───── FOOTER ───── */
+    footer {
+      background: var(--dark);
+      padding: 80px 60px 40px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 60px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--cream);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-tagline {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 280px;
+      margin-bottom: 28px;
+    }
+    .footer-socials { display: flex; gap: 16px; }
+    .footer-social {
+      width: 38px; height: 38px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 13px;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .footer-social:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-col-title {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-weight: 300;
+      transition: color 0.25s;
+    }
+    .footer-links a:hover { color: var(--cream); }
+    .footer-contact-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+    .footer-contact-icon { color: var(--gold); flex-shrink: 0; }
+    .footer-bottom {
+      padding-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.05em;
+    }
+    .footer-bottom-links { display: flex; gap: 28px; }
+    .footer-bottom-links a {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.25s;
+    }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,0.6); }
+
+    /* ───── WHATSAPP FLOAT ───── */
+    .wa-float {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 200;
+      width: 54px; height: 54px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(37,211,102,0.35);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 12px 32px rgba(37,211,102,0.45); }
+    .wa-float svg { width: 26px; height: 26px; fill: white; }
+
+    /* ───── ANIMATIONS ───── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ───── HAMBURGER ───── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--cream);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    nav.scrolled .hamburger span { background: var(--dark); }
+
+    /* ───── RESPONSIVE ───── */
+    @media (max-width: 1024px) {
+      nav { padding: 20px 32px; }
+      nav.scrolled { padding: 14px 32px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 140px 32px 80px; }
+      #about { padding: 100px 32px; grid-template-columns: 1fr; gap: 48px; }
+      .classes-header { padding: 0 32px; flex-direction: column; align-items: flex-start; gap: 12px; }
+      .classes-scroll { padding: 0 32px 20px; }
+      .classes-desc { text-align: left; }
+      #team { padding: 100px 32px; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      #why { padding: 100px 32px; }
+      .why-inner { grid-template-columns: 1fr; gap: 48px; }
+      .why-left { position: static; }
+      #faq { padding: 100px 32px; }
+      .faq-inner { grid-template-columns: 1fr; gap: 40px; }
+      .faq-left { position: static; }
+      #cta { padding: 100px 32px; }
+      footer { padding: 60px 32px 32px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-h1 { font-size: 52px; }
+      .hero-h1 .block2 { padding-left: 24px; }
+      .hero-stats { gap: 28px; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .cta-actions { flex-direction: column; align-items: center; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a href="#" class="nav-logo">FL<span>O</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">Studio</a></li>
+      <li><a href="#classes">Classes</a></li>
+      <li><a href="#team">Our Fam</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#cta" class="nav-cta">Book a Class</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg-circle hero-bg-circle-1"></div>
+    <div class="hero-bg-circle hero-bg-circle-2"></div>
+    <div class="hero-bg-circle hero-bg-circle-3"></div>
+
+    <div class="hero-left">
+      <p class="hero-tag">Women-Only Boutique Studio · Abu Dhabi</p>
+      <h1 class="hero-h1">
+        Feel<br/>
+        <em class="block2">The Flo</em>
+      </h1>
+      <p class="hero-sub">A space dedicated to women. Pilates, Yoga &amp; Barre classes crafted to move your mind, body, and soul to new heights.</p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn-primary">Book Your First Class</a>
+        <a href="#classes" class="btn-ghost">Explore Classes</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">4</div>
+          <div class="hero-stat-label">Class Types</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">10+</div>
+          <div class="hero-stat-label">Instructors</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">19K</div>
+          <div class="hero-stat-label">Community</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-right-inner">
+        <div class="hero-illustration">
+          <!-- Inline SVG Illustration -->
+          <svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" width="80%" style="max-width:360px; opacity:0.9;">
+            <!-- Background large circle -->
+            <circle cx="250" cy="300" r="220" fill="none" stroke="rgba(200,169,126,0.1)" stroke-width="1"/>
+            <circle cx="250" cy="300" r="160" fill="none" stroke="rgba(200,169,126,0.07)" stroke-width="1"/>
+
+            <!-- Floor -->
+            <ellipse cx="250" cy="480" rx="160" ry="16" fill="rgba(200,169,126,0.08)"/>
+
+            <!-- Body - yoga pose (Warrior II silhouette) -->
+            <!-- Torso -->
+            <rect x="228" y="240" width="24" height="80" rx="12" fill="rgba(200,169,126,0.45)" transform="rotate(-5 240 280)"/>
+            <!-- Head -->
+            <circle cx="243" cy="220" r="26" fill="rgba(200,169,126,0.5)"/>
+            <!-- Hair detail -->
+            <ellipse cx="243" cy="204" rx="20" ry="10" fill="rgba(200,169,126,0.3)"/>
+
+            <!-- Left arm extended -->
+            <line x1="228" y1="265" x2="130" y2="250" stroke="rgba(200,169,126,0.5)" stroke-width="14" stroke-linecap="round"/>
+            <!-- Right arm extended -->
+            <line x1="252" y1="265" x2="350" y2="248" stroke="rgba(200,169,126,0.5)" stroke-width="14" stroke-linecap="round"/>
+
+            <!-- Left leg - lunge -->
+            <line x1="235" y1="320" x2="160" y2="430" stroke="rgba(200,169,126,0.5)" stroke-width="16" stroke-linecap="round"/>
+            <!-- Right leg - extended back -->
+            <line x1="255" y1="318" x2="340" y2="420" stroke="rgba(200,169,126,0.45)" stroke-width="14" stroke-linecap="round"/>
+
+            <!-- Foot details -->
+            <ellipse cx="155" cy="435" rx="18" ry="8" fill="rgba(200,169,126,0.4)" transform="rotate(-20 155 435)"/>
+            <ellipse cx="345" cy="425" rx="18" ry="8" fill="rgba(200,169,126,0.35)" transform="rotate(10 345 425)"/>
+
+            <!-- Decorative elements -->
+            <circle cx="120" cy="160" r="4" fill="rgba(200,169,126,0.4)"/>
+            <circle cx="380" cy="180" r="6" fill="rgba(200,169,126,0.3)"/>
+            <circle cx="390" cy="380" r="3" fill="rgba(200,169,126,0.35)"/>
+            <circle cx="100" cy="370" r="5" fill="rgba(200,169,126,0.25)"/>
+
+            <!-- Text overlays -->
+            <text x="250" y="540" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="13" fill="rgba(200,169,126,0.4)" letter-spacing="8" font-style="italic">strength · balance · flow</text>
+
+            <!-- Scattered small circles -->
+            <circle cx="170" cy="200" r="2" fill="rgba(200,169,126,0.5)"/>
+            <circle cx="320" cy="140" r="2.5" fill="rgba(200,169,126,0.4)"/>
+            <circle cx="400" cy="300" r="2" fill="rgba(200,169,126,0.3)"/>
+            <circle cx="90" cy="280" r="3" fill="rgba(200,169,126,0.35)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">Pilates</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Yoga</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Barre</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Private Training</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Prenatal Classes</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Women Only</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Abu Dhabi</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Holistic Wellness</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Pilates</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Yoga</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Barre</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Private Training</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Prenatal Classes</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Women Only</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Abu Dhabi</span><span class="marquee-dot">·</span>
+      <span class="marquee-item">Holistic Wellness</span><span class="marquee-dot">·</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-left reveal">
+      <p class="about-label">About Flo Studio</p>
+      <h2 class="about-h2">A space built<br/><em>for women,</em><br/>by women.</h2>
+      <div class="about-deco-line"></div>
+      <p class="about-body">Established in Abu Dhabi, Flo is a women-only boutique fitness studio where every class is designed to create a holistic experience — bettering self from mind, body, and soul. We believe investing in your health elevates every part of your life.</p>
+      <div class="about-pills">
+        <span class="about-pill">Same-Day Treatment</span>
+        <span class="about-pill">All Fitness Levels</span>
+        <span class="about-pill">Prenatal Classes</span>
+        <span class="about-pill">Mobile App</span>
+      </div>
+    </div>
+
+    <div class="about-right reveal">
+      <div class="about-card">
+        <div class="about-card-icon">✦</div>
+        <div class="about-card-title">Our Belief</div>
+        <div class="about-card-text">We envision a space where women feel motivated to reach their full potential — physically, mentally, and emotionally. A commitment to yourself that pays off in every corner of life.</div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon">🌿</div>
+        <div class="about-card-title">Holistic Experience</div>
+        <div class="about-card-text">Every class works on creating a whole-person experience. Not just fitness — a sense of community, calm, and confidence.</div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon">📱</div>
+        <div class="about-card-title">Easy Booking</div>
+        <div class="about-card-text">Book via our website or mobile app, available on iOS and Android. Classes fill fast — reserve your spot early.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLASSES -->
+  <section id="classes">
+    <div class="classes-header">
+      <div>
+        <p class="classes-label">What We Offer</p>
+        <h2 class="classes-h2">Our <em>Classes</em></h2>
+      </div>
+      <p class="classes-desc">Designed for every level — from first-timers to seasoned movers. Every class is crafted to challenge and delight.</p>
+    </div>
+
+    <div class="classes-scroll">
+      <div class="class-card">
+        <div class="class-num">01</div>
+        <div class="class-name">Pilates</div>
+        <div class="class-desc">A full-rounded workout targeting four main pillars — building from the core outward to create lasting strength and awareness.</div>
+        <div class="class-pillars">
+          <span class="class-pillar">Strength</span>
+          <span class="class-pillar">Posture</span>
+          <span class="class-pillar">Flexibility</span>
+          <span class="class-pillar">Breathing</span>
+        </div>
+        <a href="#cta" class="class-link">Book Now →</a>
+      </div>
+
+      <div class="class-card">
+        <div class="class-num">02</div>
+        <div class="class-name">Barre</div>
+        <div class="class-desc">Inspired by the incredible strength of ballerinas. A full body workout rooted in cardio and strength — graceful yet intense.</div>
+        <div class="class-pillars">
+          <span class="class-pillar">Cardio</span>
+          <span class="class-pillar">Toning</span>
+          <span class="class-pillar">Balance</span>
+          <span class="class-pillar">Grace</span>
+        </div>
+        <a href="#cta" class="class-link">Book Now →</a>
+      </div>
+
+      <div class="class-card">
+        <div class="class-num">03</div>
+        <div class="class-name">Yoga</div>
+        <div class="class-desc">An ancient practice whose global popularity comes from its profound physical and mental benefits. We offer all levels, including prenatal.</div>
+        <div class="class-pillars">
+          <span class="class-pillar">Mindfulness</span>
+          <span class="class-pillar">Flexibility</span>
+          <span class="class-pillar">Breathing</span>
+          <span class="class-pillar">Prenatal</span>
+        </div>
+        <a href="#cta" class="class-link">Book Now →</a>
+      </div>
+
+      <div class="class-card">
+        <div class="class-num">04</div>
+        <div class="class-name">Private Training</div>
+        <div class="class-desc">The fastest path to your goals. One-on-one attention, personalised programming, and a complimentary posture analysis to start.</div>
+        <div class="class-pillars">
+          <span class="class-pillar">1-on-1</span>
+          <span class="class-pillar">Personalised</span>
+          <span class="class-pillar">Posture Analysis</span>
+        </div>
+        <a href="#cta" class="class-link">Book Now →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section id="team">
+    <div class="team-header reveal">
+      <p class="section-label">The Flo Fam</p>
+      <h2 class="section-h2">Meet Your <em>Instructors</em></h2>
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-avatar">E</div>
+        <div class="team-name">Enas Rajab</div>
+        <div class="team-role">Pilates &amp; Barre</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">T</div>
+        <div class="team-name">Taghrid Khoury</div>
+        <div class="team-role">Pilates &amp; Yoga</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">A</div>
+        <div class="team-name">Alina Drobysh</div>
+        <div class="team-role">Yoga</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">S</div>
+        <div class="team-name">Sorcha Joyce</div>
+        <div class="team-role">Pilates</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">E</div>
+        <div class="team-name">Eugenie Gardien</div>
+        <div class="team-role">Pilates</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">H</div>
+        <div class="team-name">Hiba Elderbi</div>
+        <div class="team-role">Aerial &amp; Yoga</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">G</div>
+        <div class="team-name">Gulnara Alekseeva</div>
+        <div class="team-role">Pilates &amp; Ballet</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">A</div>
+        <div class="team-name">Aleksandra Ruta</div>
+        <div class="team-role">Barre</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY FLO -->
+  <section id="why">
+    <div class="why-inner">
+      <div class="why-left reveal">
+        <p class="section-label">Why Flo</p>
+        <h2 class="section-h2">More than<br/><em>just a gym</em></h2>
+        <div class="about-deco-line" style="margin-top:28px;"></div>
+        <p style="font-size:15px;color:var(--mid);line-height:1.75;font-weight:300;margin-top:0;">We've built a place where every woman feels welcome, challenged, and cared for — from her first intro class to her hundredth.</p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-item reveal">
+          <div class="why-item-num">01</div>
+          <div class="why-item-title">All Levels Welcome</div>
+          <div class="why-item-text">Introductory classes for beginners and advanced sessions for the seasoned. No intimidation — just progress at your pace.</div>
+        </div>
+        <div class="why-item reveal">
+          <div class="why-item-num">02</div>
+          <div class="why-item-title">Women-Only Space</div>
+          <div class="why-item-text">A safe, private environment built exclusively for women. Move freely and confidently without compromise.</div>
+        </div>
+        <div class="why-item reveal">
+          <div class="why-item-num">03</div>
+          <div class="why-item-title">Prenatal Support</div>
+          <div class="why-item-text">Specialised prenatal and postnatal classes with trained instructors and required safety protocols in place.</div>
+        </div>
+        <div class="why-item reveal">
+          <div class="why-item-num">04</div>
+          <div class="why-item-title">Injury-Aware Training</div>
+          <div class="why-item-text">Instructors trained in rehabilitation classes. We work with your body, not against it — just let us know what you're dealing with.</div>
+        </div>
+        <div class="why-item reveal">
+          <div class="why-item-num">05</div>
+          <div class="why-item-title">Book with Ease</div>
+          <div class="why-item-text">Reserve your spot online or through the Flo mobile app — available on iOS and Android. Cancel anytime, 24 hours in advance.</div>
+        </div>
+        <div class="why-item reveal">
+          <div class="why-item-num">06</div>
+          <div class="why-item-title">2–3x Weekly Results</div>
+          <div class="why-item-text">Attend 2–3 classes per week and you'll feel the difference in energy, strength, and posture within weeks.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="faq-inner">
+      <div class="faq-left reveal">
+        <p class="section-label">Questions</p>
+        <h2 class="section-h2">Things you<br/><em>want to know</em></h2>
+        <div class="about-deco-line" style="margin-top:28px;"></div>
+        <p style="font-size:15px;color:var(--mid);line-height:1.75;font-weight:300;margin-top:0;">Still unsure? Reach out on WhatsApp or Instagram and we'll get back to you quickly.</p>
+        <a href="https://wa.me/971504464910" style="display:inline-block;margin-top:24px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:4px;">WhatsApp Us →</a>
+      </div>
+
+      <ul class="faq-list reveal">
+        <li class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What is Flo Studio?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p class="faq-a-inner">Flo Studio is a women-only fitness boutique offering Pilates, Yoga, and Barre classes in Abu Dhabi. Every class is built to create a holistic experience — improving your physical health, mental strength, and overall confidence.</p></div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            I've never taken a fitness class before — is that okay?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p class="faq-a-inner">Absolutely. We have classes for all levels. Introductory classes are available and specifically designed to build the foundation you need before moving to Level 1. You're guaranteed to leave sweaty and smiling.</p></div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Can I attend classes while pregnant?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p class="faq-a-inner">Yes — prenatal and postnatal classes are available. We require a doctor's clearance beforehand and don't recommend classes during the first trimester. Prenatal forms must be completed before joining any class.</p></div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            How often should I attend?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p class="faq-a-inner">We recommend 2–3 sessions per week, but the more the merrier! Consistency is the key — results come with patience and persistence.</p></div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Do I need to book in advance?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p class="faq-a-inner">Yes — classes have limited spots and fill up fast. Book through the website or the Flo mobile app (iOS and Android). If you can't make it, cancel at least 24 hours in advance to avoid being charged.</p></div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What should I wear?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p class="faq-a-inner">Wear whatever you're comfortable moving in. Fitted clothing is recommended so instructors can spot and correct posture. The studio rooms are shoe-free — bring cute socks!</p></div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Can I train if I have an injury?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p class="faq-a-inner">Our classes can actually help with rehabilitation. Always inform your instructor before class. Some of our instructors are trained in rehab — ask at reception for details.</p></div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <p class="cta-label">Ready to Begin?</p>
+    <h2 class="cta-h2">Start Your<br/><em>Flo Journey</em></h2>
+    <p class="cta-sub">Join thousands of women in Abu Dhabi who've made their health a priority. Book your first class today — we can't wait to meet you.</p>
+    <div class="cta-actions">
+      <a href="https://www.flostudio.com/book-your-class" class="btn-gold">Book Your Class</a>
+      <a href="mailto:whatsup@flostudio.com" class="btn-outline">Get in Touch</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">FL<span>O</span></div>
+        <p class="footer-tagline">A women-only boutique fitness studio in Abu Dhabi. Move your mind, body, and soul.</p>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/flo_studio" class="footer-social" target="_blank">IG</a>
+          <a href="https://www.facebook.com/flostudioae" class="footer-social" target="_blank">FB</a>
+          <a href="https://wa.me/971504464910" class="footer-social" target="_blank">WA</a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-title">Quick Links</p>
+        <ul class="footer-links">
+          <li><a href="#about">About Studio</a></li>
+          <li><a href="#classes">Classes</a></li>
+          <li><a href="#team">Our Fam</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://www.flostudio.com/book-your-class">Book a Class</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Classes</p>
+        <ul class="footer-links">
+          <li><a href="#classes">Pilates</a></li>
+          <li><a href="#classes">Barre</a></li>
+          <li><a href="#classes">Yoga</a></li>
+          <li><a href="#classes">Private Training</a></li>
+          <li><a href="#classes">Prenatal</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Contact</p>
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">📍</span>
+          <span>Villa #34 Mileih Street, Behind BMW Showroom, Al Buteen, Abu Dhabi</span>
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">📞</span>
+          <span>050-663-5498 / 02-644-6496</span>
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">✉</span>
+          <span>whatsup@flostudio.com</span>
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">🕐</span>
+          <span>Mon–Fri: 08:00–18:00<br/>Sat: 09:30–17:30<br/>Sun: 09:00–15:30</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Flo Studio. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="https://www.flostudio.com/privacy-policy">Privacy</a>
+        <a href="https://www.flostudio.com/terms-and-conditions">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WHATSAPP FLOAT -->
+  <a href="https://wa.me/971506635498" class="wa-float" target="_blank" title="Chat on WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script>
+    // ── NAV SCROLL ──
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── SCROLL REVEAL ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ── FAQ ACCORDION ──
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+  </script>
+
+</body>
+</html>
